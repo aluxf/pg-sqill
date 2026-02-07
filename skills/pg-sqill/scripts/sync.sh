@@ -32,6 +32,18 @@ fi
 
 echo "pg-sqill: Syncing database schema..."
 
+# Create query helper script (with absolute path to env file)
+QUERY_SCRIPT="$SCRIPT_DIR/query.sh"
+PROJECT_ROOT="$(pwd)"
+# Get path relative to project root for SKILL.md
+QUERY_PATH="${SCRIPT_DIR#$PROJECT_ROOT/}/query.sh"
+cat > "$QUERY_SCRIPT" << QUERYEOF
+#!/bin/bash
+source "$PROJECT_ROOT/$ENV_FILE" 2>/dev/null
+psql "\$DATABASE_URL" -c "\$1"
+QUERYEOF
+chmod +x "$QUERY_SCRIPT"
+
 # Test connection first
 echo "Connecting to database..."
 if ! psql "$DATABASE_URL" -c "SELECT 1" >/dev/null 2>&1; then
@@ -123,12 +135,12 @@ if [ -z "$SCHEMA" ]; then
 fi
 
 # Convert raw output to CREATE TABLE format and write SKILL.md
-python3 - "$SKILL_FILE" "$SCHEMA" "$ENV_FILE" <<'PYTHON'
+python3 - "$SKILL_FILE" "$SCHEMA" "$QUERY_PATH" <<'PYTHON'
 import sys
 
 skill_file = sys.argv[1]
 raw_data = sys.argv[2]
-env_file = sys.argv[3] if len(sys.argv) > 3 else ".env"
+query_path = sys.argv[3] if len(sys.argv) > 3 else "scripts/query.sh"
 tables = {}
 
 for line in raw_data.strip().split('\n'):
@@ -222,7 +234,7 @@ The application uses PostgreSQL. Connection string is in `DATABASE_URL` environm
 
 To query the database:
 ```bash
-source {env_file} && psql $DATABASE_URL -c "YOUR SQL"
+{query_path} "SELECT * FROM table LIMIT 5"
 ```
 
 Note: Table names with uppercase letters require double quotes (e.g., `"Member"`, `"Task"`).
