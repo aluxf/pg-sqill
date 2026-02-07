@@ -18,13 +18,13 @@ export DATABASE_URL="postgres://user:pass@localhost:5432/mydb"
 pg-sqill sync
 ```
 
-This creates `.claude/skills/db/` with:
+This creates `.claude/skills/pg-sqill/` with:
 - `schema.sql` - Your database schema
 - `SKILL.md` - Instructions for Claude
 
 ## In Claude Code
 
-After syncing, Claude automatically uses the `/db` skill when you ask database questions:
+After syncing, Claude automatically uses the `/pg-sqill` skill when you ask database questions:
 
 ```
 You: "Write a query to get all users with their orders"
@@ -33,7 +33,7 @@ Claude: [loads schema, writes correct query with proper table/column names]
 
 Or invoke manually:
 ```
-/db
+/pg-sqill
 ```
 
 ## Re-sync

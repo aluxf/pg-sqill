@@ -4,7 +4,7 @@ import { execSync } from "node:child_process";
 import { writeFileSync, mkdirSync, existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 
-const SKILL_DIR = ".claude/skills/db";
+const SKILL_DIR = ".claude/skills/pg-sqill";
 const SCHEMA_FILE = join(SKILL_DIR, "schema.sql");
 const SKILL_FILE = join(SKILL_DIR, "SKILL.md");
 
@@ -68,7 +68,7 @@ function introspectSchema(connectionString) {
 
 function writeSkillFile() {
   const skillContent = `---
-name: db
+name: pg-sqill
 description: PostgreSQL database helper. Use when writing SQL queries, exploring schema, or working with the database.
 allowed-tools: Bash, Read
 ---

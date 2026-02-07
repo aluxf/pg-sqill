@@ -1,5 +1,5 @@
 ---
-name: db
+name: pg-sqill
 description: PostgreSQL database helper. Use when writing SQL queries, exploring schema, or working with the database.
 allowed-tools: Bash, Read
 ---
@@ -7,7 +7,7 @@ allowed-tools: Bash, Read
 ## Database Schema
 
 ```
-!cat .claude/skills/db/schema.sql 2>/dev/null || echo "Schema not found. Run: pg-sqill sync"
+!cat .claude/skills/pg-sqill/schema.sql 2>/dev/null || echo "Schema not found. Run: pg-sqill sync"
 ```
 
 ## Quick Reference
