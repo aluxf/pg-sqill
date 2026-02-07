@@ -6,7 +6,6 @@ PostgreSQL skill for AI coding agents. Syncs your database schema so Claude/Curs
 
 - `psql` CLI (comes with PostgreSQL)
 - `DATABASE_URL` in environment or `.env` file
-- Python 3
 
 ## Install
 
