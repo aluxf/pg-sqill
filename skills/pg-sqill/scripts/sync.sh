@@ -217,7 +217,7 @@ The application uses PostgreSQL. Connection string is in `DATABASE_URL` environm
 
 To query the database directly:
 ```bash
-export $(cat .env | xargs) && psql $DATABASE_URL -c "YOUR SQL"
+psql $DATABASE_URL -c "YOUR SQL"
 ```
 
 Note: Table names with uppercase letters require double quotes (e.g., `"Member"`, `"Task"`).
