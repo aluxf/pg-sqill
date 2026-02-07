@@ -8,42 +8,39 @@ PostgreSQL skill for AI coding agents. Syncs your database schema so Claude/Curs
 npx skills add aluxf/pg-sqill
 ```
 
-Or manually copy `skills/pg-sqill/` to `.claude/skills/pg-sqill/`.
-
-## Sync Schema
+## Sync
 
 ```bash
-# Set your database connection (or use .env file)
-export DATABASE_URL="postgres://user:pass@localhost:5432/mydb"
-
-# Sync
-bash .claude/skills/pg-sqill/scripts/sync.sh
+bash <skill-path>/scripts/sync.sh
 ```
 
-This embeds your schema directly into `SKILL.md` as CREATE TABLE statements.
+This:
+- Embeds your schema as CREATE TABLE statements in `SKILL.md`
+- Creates a `query.sh` helper for seamless database queries
 
 ## Usage
 
-After syncing, your agent loads the schema when you ask database questions:
+After syncing, your agent can query the database directly:
 
+```bash
+<skill-path>/scripts/query.sh "SELECT * FROM users LIMIT 5"
 ```
-You: "Write a query to get all users with their orders"
-Agent: [uses schema, writes correct query with proper table/column names]
-```
+
+The skill auto-detects your env file (`.env.local`, `.env`, etc.) and configures the helper with the correct `DATABASE_URL`.
 
 ## Re-sync
 
-Run after schema changes (migrations, new tables):
+Run after schema changes:
 
 ```bash
-bash .claude/skills/pg-sqill/scripts/sync.sh
+bash <skill-path>/scripts/sync.sh
 ```
 
-Add to post-migration hook:
+Or add to your migration hook:
 ```json
 {
   "scripts": {
-    "migrate": "prisma migrate dev && bash .claude/skills/pg-sqill/scripts/sync.sh"
+    "migrate": "prisma migrate dev && bash <skill-path>/scripts/sync.sh"
   }
 }
 ```
@@ -51,8 +48,8 @@ Add to post-migration hook:
 ## Requirements
 
 - `psql` CLI (comes with PostgreSQL)
-- `DATABASE_URL` environment variable or `.env` file
-- Python 3 (for schema formatting)
+- `DATABASE_URL` in environment or `.env` file
+- Python 3
 
 ## Supported Agents
 
