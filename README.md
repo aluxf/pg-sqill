@@ -1,66 +1,67 @@
 # pg-sqill
 
-PostgreSQL skill for Claude Code. Syncs your database schema and provides psql instructions so Claude can help you write queries.
+PostgreSQL skill for AI coding agents. Syncs your database schema so Claude/Cursor/Copilot can write correct queries.
 
 ## Install
 
 ```bash
-npm install -g pg-sqill
+npx skills add yourname/pg-sqill
 ```
+
+Or manually copy `skills/pg-sqill/` to `.claude/skills/pg-sqill/`.
+
+## Sync Schema
+
+```bash
+# Set your database connection (or use .env file)
+export DATABASE_URL="postgres://user:pass@localhost:5432/mydb"
+
+# Sync
+bash .claude/skills/pg-sqill/scripts/sync.sh
+```
+
+This embeds your schema directly into `SKILL.md` as CREATE TABLE statements.
 
 ## Usage
 
-```bash
-# Set your database connection
-export DATABASE_URL="postgres://user:pass@localhost:5432/mydb"
-
-# Sync schema to Claude skill
-pg-sqill sync
-```
-
-This creates `.claude/skills/pg-sqill/` with:
-- `schema.sql` - Your database schema
-- `SKILL.md` - Instructions for Claude
-
-## In Claude Code
-
-After syncing, Claude automatically uses the `/pg-sqill` skill when you ask database questions:
+After syncing, your agent loads the schema when you ask database questions:
 
 ```
 You: "Write a query to get all users with their orders"
-Claude: [loads schema, writes correct query with proper table/column names]
-```
-
-Or invoke manually:
-```
-/pg-sqill
+Agent: [uses schema, writes correct query with proper table/column names]
 ```
 
 ## Re-sync
 
-Run `pg-sqill sync` again after schema changes (migrations, new tables, etc.).
+Run after schema changes (migrations, new tables):
 
-**Tip**: Add to your post-migration script:
+```bash
+bash .claude/skills/pg-sqill/scripts/sync.sh
+```
+
+Add to post-migration hook:
 ```json
 {
   "scripts": {
-    "migrate": "prisma migrate dev && pg-sqill sync"
+    "migrate": "prisma migrate dev && bash .claude/skills/pg-sqill/scripts/sync.sh"
   }
 }
 ```
 
-## How it works
-
-1. `pg-sqill sync` runs `psql \dt` and `\d *` to introspect your schema
-2. Saves output to `.claude/skills/db/schema.sql`
-3. Creates skill file with psql instructions
-4. Claude loads schema on-demand when you ask DB questions
-
 ## Requirements
 
-- Node.js 18+
 - `psql` CLI (comes with PostgreSQL)
-- `DATABASE_URL` environment variable
+- `DATABASE_URL` environment variable or `.env` file
+- Python 3 (for schema formatting)
+
+## Supported Agents
+
+Works with any agent supporting [AgentSkills.io](https://agentskills.io):
+- Claude Code
+- Cursor
+- GitHub Copilot
+- Windsurf
+- [20+ more](https://skills.sh)
 
 ## License
 

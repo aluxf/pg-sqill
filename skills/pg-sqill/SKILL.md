@@ -4,20 +4,25 @@ description: PostgreSQL database helper. Use when writing SQL queries, exploring
 allowed-tools: Bash, Read
 ---
 
-## Database Schema
+## Database
 
+The application uses PostgreSQL. Connection string is in `DATABASE_URL` environment variable.
+
+To query the database directly:
+```bash
+export $(cat .env | xargs) && psql $DATABASE_URL -c "YOUR SQL"
 ```
-!cat .claude/skills/pg-sqill/schema.sql 2>/dev/null || echo "Schema not found. Run: pg-sqill sync"
+
+Note: Table names with uppercase letters require double quotes (e.g., `"Member"`, `"Task"`).
+
+### Schema
+
+```sql
+-- Schema not synced. Run sync.sh in the scripts folder.
 ```
-
-## Quick Reference
-
-- **Query**: `psql $DATABASE_URL -c "SELECT ..."`
-- **Tables with uppercase**: Use quotes, e.g., `"Member"`, `"Task"`
-- **Interactive**: `psql $DATABASE_URL` then `\dt` (tables), `\d tablename` (describe)
 
 ## Tips
 
-- Always check column names with `\d tablename` before writing queries
 - Use `LIMIT 5` when exploring data
+- Check column names before writing queries
 - Join tables using foreign key relationships shown in schema
