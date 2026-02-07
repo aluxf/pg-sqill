@@ -215,9 +215,9 @@ allowed-tools: Bash, Read
 
 The application uses PostgreSQL. Connection string is in `DATABASE_URL` environment variable.
 
-To query the database directly:
+To query the database:
 ```bash
-psql $DATABASE_URL -c "YOUR SQL"
+source .env.local 2>/dev/null || source .env 2>/dev/null; psql $DATABASE_URL -c "YOUR SQL"
 ```
 
 Note: Table names with uppercase letters require double quotes (e.g., `"Member"`, `"Task"`).
