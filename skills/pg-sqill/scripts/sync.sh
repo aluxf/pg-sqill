@@ -40,7 +40,7 @@ QUERY_PATH="${SCRIPT_DIR#$PROJECT_ROOT/}/query.sh"
 cat > "$QUERY_SCRIPT" << QUERYEOF
 #!/bin/bash
 source "$PROJECT_ROOT/$ENV_FILE" 2>/dev/null
-psql "\$DATABASE_URL" -c "\$1"
+psql "\$DATABASE_URL" -v ON_ERROR_STOP=1 -c "SET default_transaction_read_only = on; \$1"
 QUERYEOF
 chmod +x "$QUERY_SCRIPT"
 
