@@ -5,7 +5,7 @@ PostgreSQL skill for AI coding agents. Syncs your database schema so Claude/Curs
 ## Install
 
 ```bash
-npx skills add yourname/pg-sqill
+npx skills add aluxf/pg-sqill
 ```
 
 Or manually copy `skills/pg-sqill/` to `.claude/skills/pg-sqill/`.
