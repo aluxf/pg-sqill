@@ -28,10 +28,18 @@ fi
 
 echo "pg-sqill: Syncing database schema..."
 
-# Generate CREATE TABLE statements
-echo "Introspecting database..."
+# Test connection first
+echo "Connecting to database..."
+if ! psql "$DATABASE_URL" -c "SELECT 1" >/dev/null 2>&1; then
+  echo "Error: Failed to connect to database"
+  echo "Check your DATABASE_URL credentials"
+  exit 1
+fi
 
-SCHEMA=$(psql "$DATABASE_URL" -t -A -F'|' <<'QUERY' 2>/dev/null
+# Generate CREATE TABLE statements
+echo "Introspecting schema..."
+
+SCHEMA=$(psql "$DATABASE_URL" -t -A -F'|' <<'QUERY'
 WITH
 tables AS (
   SELECT c.oid, c.relname as table_name
@@ -104,6 +112,11 @@ LEFT JOIN unique_cols u ON u.table_name = c.table_name AND u.column_name = c.col
 ORDER BY c.table_name, c.attnum;
 QUERY
 )
+
+if [ -z "$SCHEMA" ]; then
+  echo "Error: No tables found in public schema"
+  exit 1
+fi
 
 # Convert raw output to CREATE TABLE format and write SKILL.md
 python3 - "$SKILL_FILE" "$SCHEMA" <<'PYTHON'
