@@ -2,6 +2,12 @@
 
 PostgreSQL skill for AI coding agents. Syncs your database schema so Claude/Cursor/Copilot can write correct queries.
 
+## Requirements
+
+- `psql` CLI (comes with PostgreSQL)
+- `DATABASE_URL` in environment or `.env` file
+- Python 3
+
 ## Install
 
 ```bash
@@ -45,12 +51,6 @@ Or add to your migration hook:
   }
 }
 ```
-
-## Requirements
-
-- `psql` CLI (comes with PostgreSQL)
-- `DATABASE_URL` in environment or `.env` file
-- Python 3
 
 ## Supported Agents
 
