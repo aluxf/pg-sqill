@@ -30,19 +30,34 @@ function getConnectionString() {
 }
 
 function introspectSchema(connectionString) {
-  const queries = [
-    // List all tables
-    "\\dt",
-    // Get schema for each table (columns, types, constraints)
-    "\\d *",
-  ];
-
   try {
-    const result = execSync(
-      `psql "${connectionString}" -c "\\dt" -c "\\d *"`,
+    // Get list of tables in public schema
+    const tablesResult = execSync(
+      `psql "${connectionString}" -t -c "SELECT tablename FROM pg_tables WHERE schemaname = 'public' ORDER BY tablename"`,
       { encoding: "utf-8", stdio: ["pipe", "pipe", "pipe"] }
     );
-    return result;
+    const tables = tablesResult.trim().split("\n").map(t => t.trim()).filter(Boolean);
+
+    if (tables.length === 0) {
+      return "No tables found in public schema.";
+    }
+
+    // Get table list
+    let output = execSync(
+      `psql "${connectionString}" -c "\\dt public.*"`,
+      { encoding: "utf-8", stdio: ["pipe", "pipe", "pipe"] }
+    );
+
+    // Describe each table individually
+    for (const table of tables) {
+      const desc = execSync(
+        `psql "${connectionString}" -c "\\d \\"${table}\\""`,
+        { encoding: "utf-8", stdio: ["pipe", "pipe", "pipe"] }
+      );
+      output += "\n" + desc;
+    }
+
+    return output;
   } catch (error) {
     if (error.stderr) {
       console.error("psql error:", error.stderr);
