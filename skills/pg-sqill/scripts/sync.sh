@@ -7,17 +7,21 @@ set -e
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SKILL_FILE="$SCRIPT_DIR/../SKILL.md"
 
-# Find DATABASE_URL
+# Find DATABASE_URL and track which file it came from
+ENV_FILE=""
 if [ -z "$DATABASE_URL" ]; then
-  for envfile in .env .env.local .env.development; do
+  for envfile in .env.local .env .env.development; do
     if [ -f "$envfile" ]; then
       url=$(grep -E '^DATABASE_URL=' "$envfile" | sed 's/^DATABASE_URL=//' | tr -d '"'"'" 2>/dev/null)
       if [ -n "$url" ]; then
         DATABASE_URL="$url"
+        ENV_FILE="$envfile"
         break
       fi
     fi
   done
+else
+  ENV_FILE="environment"
 fi
 
 if [ -z "$DATABASE_URL" ]; then
@@ -119,11 +123,12 @@ if [ -z "$SCHEMA" ]; then
 fi
 
 # Convert raw output to CREATE TABLE format and write SKILL.md
-python3 - "$SKILL_FILE" "$SCHEMA" <<'PYTHON'
+python3 - "$SKILL_FILE" "$SCHEMA" "$ENV_FILE" <<'PYTHON'
 import sys
 
 skill_file = sys.argv[1]
 raw_data = sys.argv[2]
+env_file = sys.argv[3] if len(sys.argv) > 3 else ".env"
 tables = {}
 
 for line in raw_data.strip().split('\n'):
@@ -217,7 +222,7 @@ The application uses PostgreSQL. Connection string is in `DATABASE_URL` environm
 
 To query the database:
 ```bash
-source .env.local 2>/dev/null || source .env 2>/dev/null; psql $DATABASE_URL -c "YOUR SQL"
+source {env_file} && psql $DATABASE_URL -c "YOUR SQL"
 ```
 
 Note: Table names with uppercase letters require double quotes (e.g., `"Member"`, `"Task"`).
