@@ -17,6 +17,7 @@ bash <skill-path>/scripts/sync.sh
 This:
 - Embeds your schema as CREATE TABLE statements in `SKILL.md`
 - Creates a `query.sh` helper for seamless database queries
+- **Read-only by default** - query.sh blocks DELETE/UPDATE/DROP
 
 ## Usage
 
